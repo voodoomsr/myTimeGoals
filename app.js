@@ -27,8 +27,8 @@ request(options, function (err, res, body) {
   }
   data = JSON.parse(body)
 
-  let growth = data.data[0].totals.at(-1)
-  let work = data.data[1].totals.at(-1)
+  let growth = getTotalByProject('growth', data)
+  let work = getTotalByProject('work', data)
   console.log(`Starting from: ${since}`)
   console.log(`total growth: ${timeUtils.convertMS(growth)}`)
   console.log(`total work: ${timeUtils.convertMS(work)}`)
@@ -44,3 +44,10 @@ request(options, function (err, res, body) {
   multibar.create(30, currentWork, {payload:   'work  '})
   multibar.stop()
 })
+
+function getTotalByProject(projectName, data){
+  let filteredData =  data.data.filter((projectData)=> projectData.title.project === projectName)
+  if(filteredData.length > 0)
+    return filteredData[0].totals.at(-1)
+  else 0
+}
